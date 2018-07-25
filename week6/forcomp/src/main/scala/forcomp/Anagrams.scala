@@ -2,6 +2,13 @@ package forcomp
 
 
 object Anagrams {
+  def log[T](thing: T): T = {
+    println("\n\n\n")
+    println("logging")
+    println(thing)
+    println("\n\n\n")
+    thing
+  }
 
   /** A word is simply a `String`. */
   type Word = String
@@ -34,10 +41,14 @@ object Anagrams {
    *
    *  Note: you must use `groupBy` to implement this method!
    */
-  def wordOccurrences(w: Word): Occurrences = ???
+  def wordOccurrences(w: Word): Occurrences =
+    w.map(_.toLower).groupBy(_.toChar).mapValues(_.length).toList.sorted
 
   /** Converts a sentence into its character occurrence list. */
-  def sentenceOccurrences(s: Sentence): Occurrences = ???
+  def sentenceOccurrences(s: Sentence): Occurrences =
+    s.map(wordOccurrences).map(_.toMap).reduceLeft((acc, m) => acc ++ m.map {
+      case (char, count) => char -> (count + acc.getOrElse(char, 0))
+    }).toList.sorted
 
   /** The `dictionaryByOccurrences` is a `Map` from different occurrences to a sequence of all
    *  the words that have that occurrence count.
